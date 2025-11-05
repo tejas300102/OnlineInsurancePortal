@@ -1,4 +1,9 @@
+// export const ROLES = {
+//     ADMIN:'admin',
+//     CUSTOMER:'user'
+// }
+
 export const ROLES = {
-    ADMIN:'admin',
-    CUSTOMER:'user'
-}
+    ADMIN: "admin",
+    USER: "user",
+};

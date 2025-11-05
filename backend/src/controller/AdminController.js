@@ -1,17 +1,103 @@
-import { getConnectionObject } from "../configs/dbconfigs.js";
+// import { getConnectionObject } from "../configs/dbconfigs.js";
 
-// Get all users
+// // Get all users
+// export async function getAllUsers(req, res) {
+//   try {
+//     const db = getConnectionObject();
+//     const [rows] = await db.query("SELECT name, email, phone, address FROM users");
+//     res.json(rows);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// }
+
+// // Get all policies purchased by a user
+// export async function getUserPolicies(req, res) {
+//   const user_id = req.params.user_id;
+//   try {
+//     const db = getConnectionObject();
+//     const [rows] = await db.query(
+//       `SELECT up.*, p.policy_name 
+//        FROM user_policies up 
+//        JOIN policies p ON up.policy_id = p.policy_id 
+//        WHERE up.user_id=?`,
+//       [user_id]
+//     );
+//     res.json(rows);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// }
+
+// // Get all claims of a user
+// export async function getUserClaims(req, res) {
+//   const user_id = req.params.user_id;
+//   try {
+//     const db = getConnectionObject();
+//     const [rows] = await db.query(
+//       `SELECT c.*, p.policy_name 
+//        FROM claims c 
+//        JOIN policies p ON c.policy_id = p.policy_id 
+//        WHERE c.user_id=?`,
+//       [user_id]
+//     );
+//     res.json(rows);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// }
+
+
+import { getConnectionObject } from "../configs/dbconfigs.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
+// ✅ Admin Login
+export async function adminLogin(req, res) {
+  const { email, password } = req.body;
+
+  try {
+    const db = getConnectionObject();
+    const [rows] = await db.query("SELECT * FROM admins WHERE email = ?", [email]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    const admin = rows[0];
+
+    // compare hashed password
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+
+    // generate JWT token
+    const token = jwt.sign(
+      { id: admin.admin_id, email: admin.email, role: "admin" },
+      "your_jwt_secret_key",
+      { expiresIn: "2h" }
+    );
+
+    res.json({ message: "Admin login successful", token });
+  } catch (err) {
+    console.error("Admin Login Error:", err);
+    res.status(500).json({ message: err.message });
+  }
+}
+
+// ✅ Get all users
 export async function getAllUsers(req, res) {
   try {
     const db = getConnectionObject();
-    const [rows] = await db.query("SELECT name, email, phone, address FROM users");
+    const [rows] = await db.query("SELECT user_id ,name, email, phone, address, DATE_FORMAT(created_at, '%Y-%m-%d') as created_at FROM users");
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 }
 
-// Get all policies purchased by a user
+// ✅ Get all policies purchased by a user
 export async function getUserPolicies(req, res) {
   const user_id = req.params.user_id;
   try {
@@ -29,7 +115,7 @@ export async function getUserPolicies(req, res) {
   }
 }
 
-// Get all claims of a user
+// ✅ Get all claims of a user
 export async function getUserClaims(req, res) {
   const user_id = req.params.user_id;
   try {
@@ -46,3 +132,33 @@ export async function getUserClaims(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+
+// ✅ Dashboard Stats
+export async function getDashboardStats(req, res) {
+  try {
+    const db = getConnectionObject();
+
+    // Get total users
+    const [[{ total_users }]] = await db.query("SELECT COUNT(*) AS total_users FROM users");
+
+    // Get active policies
+    const [[{ active_policies }]] = await db.query(
+      "SELECT COUNT(*) AS active_policies FROM user_policies WHERE status='active'"
+    );
+
+    // Get pending claims
+    const [[{ pending_claims }]] = await db.query(
+      "SELECT COUNT(*) AS pending_claims FROM claims WHERE claim_status='pending'"
+    );
+
+    res.json({
+      total_users,
+      active_policies,
+      pending_claims,
+    });
+  } catch (err) {
+    console.error("Dashboard Stats Error:", err);
+    res.status(500).json({ message: err.message });
+  }
+}
+

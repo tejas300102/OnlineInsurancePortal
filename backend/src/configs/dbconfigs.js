@@ -1,15 +1,15 @@
 import { createConnection } from "mysql2/promise";
 
 
-let connection=null;
-export async function connectDb(){
+let connection = null;
+export async function connectDb() {
     try {
         connection = await createConnection({
             host: 'localhost',
             user: 'root',
             password: 'cdac',
             port: 3306,
-            database: 'insurance_db'  
+            database: 'insurance_db'
         });
         console.log("db connected");
     } catch (error) {
@@ -17,6 +17,6 @@ export async function connectDb(){
         console.log(error);
     }
 };
-export function getConnectionObject(){
+export function getConnectionObject() {
     return connection;
 }

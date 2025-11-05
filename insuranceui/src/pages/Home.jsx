@@ -1,4 +1,3 @@
-
 import { getAllPolicies } from "../services/PolicyServices";
 
 // export function Home() {
@@ -76,7 +75,6 @@ import { getAllPolicies } from "../services/PolicyServices";
 
 // export default Home;
 
-
 import React, { useEffect, useState } from "react";
 
 export function Home() {
@@ -97,12 +95,12 @@ export function Home() {
         console.error("Error fetching policies:", error);
         // Set an empty array on error to halt the spinner and display "No policies available"
         // In a production app, you might want a dedicated 'error' state to show a specific message.
-        setPolicies([]); 
+        setPolicies([]);
       }
     };
 
     fetchPolicies();
-  }, []); 
+  }, []);
 
   // 3. Helper component for rendering a single policy card
   const PolicyCard = ({ policy }) => (
@@ -110,12 +108,19 @@ export function Home() {
       key={policy.policy_id}
       className="p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all border border-gray-200"
     >
-      <h3 className="text-xl font-bold text-indigo-600 mb-2">{policy.policy_name}</h3>
+      <h3 className="text-xl font-bold text-indigo-600 mb-2">
+        {policy.policy_name}
+      </h3>
       {/* Set a fixed height for short_desc to keep card size consistent */}
-      <p className="text-gray-600 mb-4 h-12 overflow-hidden">{policy.short_desc}</p>
+      <p className="text-gray-600 mb-4 h-12 overflow-hidden">
+        {policy.short_desc}
+      </p>
       <div className="text-sm text-gray-500 mb-4">
         <p className="font-semibold text-gray-800">
-          Premium: <span className="text-green-600 font-bold">${policy.premium_amount}</span>
+          Premium:{" "}
+          <span className="text-green-600 font-bold">
+            ${policy.premium_amount}
+          </span>
         </p>
         <p>Duration: {policy.duration_years} years</p>
       </div>
@@ -153,7 +158,11 @@ export function Home() {
         </h2>
 
         {/* Conditional Rendering: Check the single 'policies' state */}
-        {policies === null && <p className="text-center text-gray-500 text-lg">Loading policies...</p>}
+        {policies === null && (
+          <p className="text-center text-gray-500 text-lg">
+            Loading policies...
+          </p>
+        )}
         {Array.isArray(policies) && policies.length > 0 && (
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {policies.map((policy) => (
@@ -162,7 +171,9 @@ export function Home() {
           </div>
         )}
         {Array.isArray(policies) && policies.length === 0 && (
-          <p className="text-center text-gray-500 text-lg">No policies available at the moment or failed to fetch data.</p>
+          <p className="text-center text-gray-500 text-lg">
+            No policies available at the moment or failed to fetch data.
+          </p>
         )}
       </section>
 
