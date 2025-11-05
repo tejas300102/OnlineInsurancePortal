@@ -29,9 +29,9 @@ export async function getUserProfile(req, res) {
   try {
     const db = getConnectionObject();
     const [rows] = await db.query("SELECT * FROM users WHERE user_id=?", [user_id]);
-    if (rows.length === 0) 
+    if (rows.length === 0)
       return res.status(404).json({ message: "User not found" });
-      res.json(rows[0]);
+    res.json(rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
