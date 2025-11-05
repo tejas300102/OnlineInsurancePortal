@@ -29,7 +29,8 @@ import { registerUser } from "./src/controller/UserController.js";
 import { login } from "./src/controller/LoginController.js";
 import { adminLogin, getAllUsers, getUserPolicies } from "./src/controller/AdminController.js";
 import { verifyToken } from "./src/Middleware/VerifyToken.js";
-import { addPolicy } from "./src/controller/PolicyController.js";
+import { addPolicy, getPolicies } from "./src/controller/PolicyController.js";
+import cors from "cors";
 
 
 // Routes
@@ -52,6 +53,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(cors());
 
 app.use("/admin", AdminRoutes);
 app.use("/policy", PolicyRoutes);
