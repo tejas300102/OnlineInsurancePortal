@@ -30,7 +30,7 @@ import { login } from "./src/controller/LoginController.js";
 import { adminLogin, getAllUsers, getUserPolicies } from "./src/controller/AdminController.js";
 import { verifyToken } from "./src/Middleware/VerifyToken.js";
 import { addPolicy, getPolicies } from "./src/controller/PolicyController.js";
-import cors from "cors";
+
 
 
 // Routes

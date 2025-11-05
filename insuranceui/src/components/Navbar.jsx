@@ -62,27 +62,42 @@ import { Link, useNavigate } from "react-router-dom";
 import navbarLogo from "../assets/navbarLogo.png";
 
 const Navbar = () => {
-  const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "About Us", path: "/about" },
-    { name: "Contact", path: "/contact" },
-    { name: "Claim", path: "/claim" },
-    { name: "My Account", path: "/myaccount" },
-  ];
-
-  const ref = React.useRef(null);
   const navigate = useNavigate();
 
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
+  // Get login info from localStorage
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
+
+  // Build nav links dynamically based on role
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "About Us", path: "/about" },
+    { name: "Contact", path: "/contact" },
+  ];
+
+  if (role === "user") {
+    navLinks.push({ name: "Claim", path: "/claim" });
+    navLinks.push({ name: "My Account", path: "/myaccount" });
+  }
+
+  if (role === "admin") {
+    navLinks.push({ name: "Add Policy", path: "/add-policy" });
+  }
+
   React.useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    navigate("/login");
+  };
 
   return (
     <nav
@@ -94,10 +109,7 @@ const Navbar = () => {
     >
       {/* Logo */}
       <Link to="/" className="flex items-center gap-3">
-        {/* Logo */}
         <img src={navbarLogo} alt="AssureX logo" className="w-10" />
-
-        {/* Text block */}
         <div className="flex flex-col">
           <span
             className={`text-2xl font-bold ${
@@ -106,7 +118,6 @@ const Navbar = () => {
           >
             AssureX
           </span>
-
           <span className="text-sm text-gray-300">
             An Online Solution to your Insurance
           </span>
@@ -133,7 +144,7 @@ const Navbar = () => {
         ))}
       </div>
 
-      {/* Right side (Search + Login) */}
+      {/* Right side buttons */}
       <div className="hidden md:flex items-center gap-4">
         <svg
           className={`h-6 w-6 transition-all duration-500 ${
@@ -147,16 +158,30 @@ const Navbar = () => {
           <circle cx="11" cy="11" r="8" />
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
-        <button
-          onClick={() => navigate("/login")}
-          className={`px-6 py-2 rounded-full ml-4 transition-all duration-500 ${
-            isScrolled
-              ? "text-white bg-black hover:bg-gray-800"
-              : "bg-white text-black hover:bg-gray-200"
-          }`}
-        >
-          Login
-        </button>
+
+        {!token ? (
+          <button
+            onClick={() => navigate("/login")}
+            className={`px-6 py-2 rounded-full ml-4 transition-all duration-500 ${
+              isScrolled
+                ? "text-white bg-black hover:bg-gray-800"
+                : "bg-white text-black hover:bg-gray-200"
+            }`}
+          >
+            Login
+          </button>
+        ) : (
+          <button
+            onClick={handleLogout}
+            className={`px-6 py-2 rounded-full ml-4 transition-all duration-500 ${
+              isScrolled
+                ? "text-white bg-red-600 hover:bg-red-700"
+                : "bg-white text-red-600 hover:bg-red-100"
+            }`}
+          >
+            Logout
+          </button>
+        )}
       </div>
 
       {/* Mobile Menu Button */}
@@ -210,15 +235,27 @@ const Navbar = () => {
           </Link>
         ))}
 
-        <button
-          onClick={() => {
-            setIsMenuOpen(false);
-            navigate("/login");
-          }}
-          className="bg-black text-white px-8 py-2.5 rounded-full transition-all duration-500 hover:bg-gray-800"
-        >
-          Login
-        </button>
+        {!token ? (
+          <button
+            onClick={() => {
+              setIsMenuOpen(false);
+              navigate("/login");
+            }}
+            className="bg-black text-white px-8 py-2.5 rounded-full transition-all duration-500 hover:bg-gray-800"
+          >
+            Login
+          </button>
+        ) : (
+          <button
+            onClick={() => {
+              setIsMenuOpen(false);
+              handleLogout();
+            }}
+            className="bg-red-600 text-white px-8 py-2.5 rounded-full transition-all duration-500 hover:bg-red-700"
+          >
+            Logout
+          </button>
+        )}
       </div>
     </nav>
   );

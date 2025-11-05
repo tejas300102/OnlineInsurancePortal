@@ -1,5 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import { Home } from "./pages/Home";
 import Claim from "./pages/Claim";
 import AdminAddPolicy from "./pages/AdminAddPolicy";
@@ -8,7 +9,12 @@ import Register from "./pages/Register";
 import AboutUs from "./pages/AboutUs";
 import ContactUs from "./pages/ContactUs";
 import MyAccount from "./pages/MyAccount";
-import Footer from "./components/Footer";
+import ProtectedRoute from "./components/ProtectedRoutes";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminNavbar from "./pages/admin/AdminNavbar";
+import AdminClaims from "./pages/admin/AdminClaims";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminPolicies from "./pages/admin/AdminPolicies";
 
 const router = createBrowserRouter([
   {
@@ -17,46 +23,6 @@ const router = createBrowserRouter([
       <>
         <Navbar />
         <Home />
-        <Footer />
-      </>
-    ),
-  },
-  {
-    path: "/claim",
-    element: (
-      <>
-        <Navbar />
-        <Claim />
-        <Footer />
-      </>
-    ),
-  },
-  {
-    path: "/add-policy",
-    element: (
-      <>
-        <Navbar />
-        <AdminAddPolicy />
-        <Footer />
-      </>
-    ),
-  },
-  {
-    path: "/login",
-    element: (
-      <>
-        <Navbar />
-        <Login />
-        <Footer />
-      </>
-    ),
-  },
-  {
-    path: "/register",
-    element: (
-      <>
-        <Navbar />
-        <Register />
         <Footer />
       </>
     ),
@@ -82,13 +48,97 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/login",
+    element: (
+      <>
+        <Navbar />
+        <Login />
+        <Footer />
+      </>
+    ),
+  },
+  {
+    path: "/register",
+    element: (
+      <>
+        <Navbar />
+        <Register />
+        <Footer />
+      </>
+    ),
+  },
+  // 🧩 Protected routes
+  {
     path: "/myaccount",
     element: (
       <>
         <Navbar />
-        <MyAccount />
+        <ProtectedRoute allowedRole="user">
+          <MyAccount />
+        </ProtectedRoute>
         <Footer />
       </>
+    ),
+  },
+  {
+    path: "/claim",
+    element: (
+      <>
+        <Navbar />
+        <ProtectedRoute allowedRole="user">
+          <Claim />
+        </ProtectedRoute>
+        <Footer />
+      </>
+    ),
+  },
+  // protected Admin routes
+
+  // {
+  //   path: "/admin/dashboard",
+  //   element: (
+  //     <>
+  //       <AdminNavbar />
+  //       <ProtectedRoute allowedRole="admin">
+  //         <AdminDashboard />
+  //       </ProtectedRoute>
+  //       <Footer />
+  //     </>
+  //   ),
+  // },
+  {
+    path: "/admin/dashboard",
+    element: (
+      <ProtectedRoute allowedRole="admin">
+        <AdminDashboard />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/admin/claims",
+    element: (
+      <ProtectedRoute allowedRole="admin">
+        <AdminClaims />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/admin/users", // ✅ New route
+    element: (
+      <>
+        <AdminNavbar />
+        <ProtectedRoute allowedRole="admin">
+          <AdminUsers />
+        </ProtectedRoute>
+      </>
+    ),
+  },
+  {
+    path: "/add-policy",
+    element: (
+      <ProtectedRoute allowedRole="admin">
+        <AdminPolicies />
+      </ProtectedRoute>
     ),
   },
 ]);

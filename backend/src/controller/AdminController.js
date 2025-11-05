@@ -90,7 +90,7 @@ export async function adminLogin(req, res) {
 export async function getAllUsers(req, res) {
   try {
     const db = getConnectionObject();
-    const [rows] = await db.query("SELECT name, email, phone, address FROM users");
+    const [rows] = await db.query("SELECT user_id ,name, email, phone, address, DATE_FORMAT(created_at, '%Y-%m-%d') as created_at FROM users");
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -132,3 +132,33 @@ export async function getUserClaims(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+
+// ✅ Dashboard Stats
+export async function getDashboardStats(req, res) {
+  try {
+    const db = getConnectionObject();
+
+    // Get total users
+    const [[{ total_users }]] = await db.query("SELECT COUNT(*) AS total_users FROM users");
+
+    // Get active policies
+    const [[{ active_policies }]] = await db.query(
+      "SELECT COUNT(*) AS active_policies FROM user_policies WHERE status='active'"
+    );
+
+    // Get pending claims
+    const [[{ pending_claims }]] = await db.query(
+      "SELECT COUNT(*) AS pending_claims FROM claims WHERE claim_status='pending'"
+    );
+
+    res.json({
+      total_users,
+      active_policies,
+      pending_claims,
+    });
+  } catch (err) {
+    console.error("Dashboard Stats Error:", err);
+    res.status(500).json({ message: err.message });
+  }
+}
+

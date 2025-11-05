@@ -1,6 +1,7 @@
 // PolicyRoutes.js
 import express from "express";
 import {
+
     getPolicies,
     getPolicyById,
     addPolicy,
@@ -21,7 +22,7 @@ router.get("/:id", getPolicyById);
 router.post("/add", addPolicy);
 router.put("/update/:id", updatePolicy);
 router.delete("/delete/:id", deletePolicy);
-
+router.get("/add-policy", addPolicy)
 router.post("/purchase", purchasePolicy);
 router.get("/purchases/:user_id", getUserPurchases);
 router.get("/purchases", getAllPurchases);
