@@ -34,6 +34,55 @@
 // }
 
 
+// import { ROLES } from "../constants/RoleConstants.js";
+// import bcrypt from "bcrypt";
+// import jwt from "jsonwebtoken";
+// import { getConnectionObject } from "../configs/dbconfigs.js";
+
+// export async function login(req, res) {
+//     try {
+//         const connection = getConnectionObject();
+//         const { email, password, role } = req.body;
+
+//         // Choose table based on role
+//         const tableName = role === ROLES.ADMIN ? "admins" : "users";
+//         console.log("Login attempt:", { email, role, tableName });  // 🔹 log incoming data
+
+//         // Fetch user by email
+//         const [rows] = await connection.query(
+//             `SELECT * FROM ${tableName} WHERE email = ?`,
+//             [email]
+//         );
+//         console.log("Query result:", rows);  // 🔹 log query result
+
+//         if (rows.length === 0) {
+//             return res.status(400).send({ message: "Email not found" });
+//         }
+
+//         const user = rows[0];
+//         const isMatch = await bcrypt.compare(password, user.password);
+
+//         if (!isMatch) {
+//             return res.status(400).send({ message: "Invalid password" });
+//         }
+
+//         const token = jwt.sign(
+//             {
+//                 id: role === ROLES.ADMIN ? user.admin_id : user.user_id,
+//                 role,
+//             },
+//             "user1234",
+//             { expiresIn: "2h" }
+//         );
+
+//         res.status(200).send({ token, message: "Login successful" });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send({ message: "Something went wrong" });
+//     }
+// }
+
+
 import { ROLES } from "../constants/RoleConstants.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -46,26 +95,27 @@ export async function login(req, res) {
 
         // Choose table based on role
         const tableName = role === ROLES.ADMIN ? "admins" : "users";
-        console.log("Login attempt:", { email, role, tableName });  // 🔹 log incoming data
+        console.log("Login attempt:", { email, role, tableName });
 
         // Fetch user by email
         const [rows] = await connection.query(
             `SELECT * FROM ${tableName} WHERE email = ?`,
             [email]
         );
-        console.log("Query result:", rows);  // 🔹 log query result
+        console.log("Query result:", rows);
 
         if (rows.length === 0) {
-            return res.status(400).send({ message: "Email not found" });
+            return res.status(400).json({ message: "Email not found" });
         }
 
         const user = rows[0];
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            return res.status(400).send({ message: "Invalid password" });
+            return res.status(400).json({ message: "Invalid password" });
         }
 
+        // Generate JWT
         const token = jwt.sign(
             {
                 id: role === ROLES.ADMIN ? user.admin_id : user.user_id,
@@ -75,9 +125,21 @@ export async function login(req, res) {
             { expiresIn: "2h" }
         );
 
-        res.status(200).send({ token, message: "Login successful" });
+        // ✅ Include user info in response
+        const userData = {
+            id: role === ROLES.ADMIN ? user.admin_id : user.user_id,
+            name: user.name,
+            email: user.email,
+            role,
+        };
+
+        res.status(200).json({
+            message: "Login successful",
+            token,
+            user: userData, // 👈 Frontend will use this
+        });
     } catch (error) {
-        console.error(error);
-        res.status(500).send({ message: "Something went wrong" });
+        console.error("❌ Login error:", error);
+        res.status(500).json({ message: "Something went wrong", error: error.message });
     }
 }
