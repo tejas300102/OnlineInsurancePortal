@@ -37,10 +37,11 @@ import { addPolicy, getPolicies } from "./src/controller/PolicyController.js";
 import UserRoutes from "../backend/src/Routes/UserRoutes.js"
 import ClaimRoutes from "../backend/src/Routes/ClaimRoutes.js";
 
-import PurchaseRoutes from "../backend/src/Routes/PurchaseRoutes.js"
+// import PurchaseRoutes from "../backend/src/Routes/PurchaseRoutes.js"
 import PolicyRoutes from "../backend/src/Routes/PolicyRoutes.js"
 import AdminRoutes from "../backend/src/Routes/AdminRoutes.js"
 import LoginRoutes from "../backend/src/Routes/UserRoutes.js"
+import purchaseRoutes from "./src/Routes/PurchaseRoutes.js";
 
 
 const app = express();
@@ -58,7 +59,8 @@ app.use(cors());
 app.use("/admin", AdminRoutes);
 app.use("/policy", PolicyRoutes);
 app.use("/claims", ClaimRoutes);
-
+app.use("/purchase", purchaseRoutes);
+console.log("✅ Purchase routes active at /purchase");
 // ✅ Routes
 app.post("/register", registerUser);             // works
 app.post("/login", login);                       // works
@@ -67,8 +69,25 @@ app.post("/admin/login", adminLogin);
 app.get("/admin/getusers", verifyToken, getAllUsers);  // works
 app.get("/admin/userpolicies", getUserPolicies);       // works
 
-// ✅ Start Server
-app.listen(7000, () => {
-    connectDb();
-    console.log("✅ Server running on port 7000");
-});
+
+// // ✅ Start Server
+// app.listen(7000, () => {
+//     connectDb();
+//     console.log("✅ Server running on port 7000");
+// });
+
+
+const startServer = async () => {
+    try {
+        await connectDb(); // ✅ Ensure DB connection first
+        console.log("✅ Database connected");
+
+        app.listen(7000, () => {
+            console.log("✅ Server running on port 7000");
+        });
+    } catch (error) {
+        console.error("❌ Failed to connect to DB:", error);
+    }
+};
+
+startServer();
