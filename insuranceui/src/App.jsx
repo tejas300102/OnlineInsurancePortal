@@ -3,7 +3,6 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { Home } from "./pages/Home";
 import Claim from "./pages/Claim";
-import AdminAddPolicy from "./pages/AdminAddPolicy";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AboutUs from "./pages/AboutUs";
@@ -106,7 +105,7 @@ const router = createBrowserRouter([
       </>
     ),
   },
-  // protected Admin routes
+  
 
   {
     path: "/admin/dashboard",
@@ -125,7 +124,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/admin/users", // ✅ New route
+    path: "/admin/users", 
     element: (
       <>
         <AdminNavbar />

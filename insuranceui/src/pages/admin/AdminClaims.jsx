@@ -62,7 +62,7 @@ export default function AdminClaims() {
       <AdminNavbar />
       <div className="p-8">
         <h1 className="text-3xl font-semibold text-gray-800 mb-6">
-          Manage Claims 💰
+          Manage Claims 
         </h1>
 
         {claims.length === 0 ? (

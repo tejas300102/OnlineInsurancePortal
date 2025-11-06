@@ -11,7 +11,7 @@ const teamMembers = [
     skills:
       "Java, HTML, CSS, JavaScript, React, NodeJS, ExpressJS, MySQL, MongoDB",
     role: "UI Development and API Testing",
-    img: salikpic, // Replace with your actual photo URL later
+    img: salikpic, 
   },
   {
     name: "Tejas Anil Jadhao",

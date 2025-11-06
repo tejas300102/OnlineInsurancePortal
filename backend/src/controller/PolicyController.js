@@ -4,13 +4,13 @@ import { getConnectionObject } from "../configs/dbconfigs.js";
 export async function getPolicies(req, res) {
   try {
     const db = getConnectionObject();
-    console.log("✅ DB object:", db ? "Available" : "NULL")
+    console.log(" DB object:", db ? "Available" : "NULL")
     const [rows] = await db.query("SELECT * FROM policies");
-    console.log("✅ Rows from DB:", rows);
+    console.log(" Rows from DB:", rows);
 
     res.json(rows);
   } catch (err) {
-    console.error("❌ getPolicies error:", err);
+    console.error(" getPolicies error:", err);
     res.status(500).json({ error: err.message });
   }
 }

@@ -1,47 +1,9 @@
-// import { Link, useNavigate } from "react-router-dom";
 
-// export default function AdminNavbar() {
-//   const navigate = useNavigate();
-
-//   const handleLogout = () => {
-//     localStorage.clear();
-//     navigate("/login");
-//   };
-
-//   return (
-//     <nav className="bg-gray-900 text-white flex justify-between items-center px-8 py-4 shadow-md">
-//       <h1 className="text-2xl font-bold text-indigo-400">
-//         AssureX Admin Panel
-//       </h1>
-//       <div className="flex gap-6">
-//         <Link to="/admin/dashboard" className="hover:text-indigo-400">
-//           Dashboard
-//         </Link>
-//         <Link to="/admin/users" className="hover:text-indigo-400">
-//           Users
-//         </Link>
-//         <Link to="/admin/claims" className="hover:text-indigo-400">
-//           Claims
-//         </Link>
-//         <Link to="/add-policy" className="hover:text-indigo-400">
-//           Add Policy
-//         </Link>
-//         <button
-//           onClick={handleLogout}
-//           className="bg-red-500 px-4 py-1 rounded hover:bg-red-600"
-//         >
-//           Logout
-//         </button>
-//       </div>
-//     </nav>
-//   );
-// }
 
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useToast } from "../../components/hooks/use-toast";
 import finalLogo from "../../assets/finalLogo.png";
-// import { Button } from "../components/lightswind/button";
 import {
   Menu,
   X,

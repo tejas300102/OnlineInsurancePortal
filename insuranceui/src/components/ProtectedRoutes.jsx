@@ -8,7 +8,7 @@ export default function ProtectedRoute({ children, allowedRole }) {
   // If user is not logged in
   if (!token) return <Navigate to="/login" replace />;
 
-  // If this route requires a specific role (e.g. admin)
+  // If this route requires a specific role 
   if (allowedRole && role !== allowedRole) return <Navigate to="/" replace />;
 
   return children;
