@@ -1,16 +1,47 @@
 import { getConnectionObject } from "../configs/dbconfigs.js";
 
 // User purchases a policy
+// export async function purchasePolicy(req, res) {
+//   const { user_id, policy_id } = req.body;
+//   try {
+//     const db = getConnectionObject();
+//     await db.query("INSERT INTO user_policies (user_id, policy_id) VALUES (?,?)", [user_id, policy_id]);
+//     res.json({ message: "Policy purchased successfully" });
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// }
+
+
 export async function purchasePolicy(req, res) {
   const { user_id, policy_id } = req.body;
+
   try {
     const db = getConnectionObject();
-    await db.query("INSERT INTO user_policies (user_id, policy_id) VALUES (?,?)", [user_id, policy_id]);
+
+    // ✅ Check if the user already purchased this policy
+    const [existing] = await db.query(
+      "SELECT * FROM user_policies WHERE user_id = ? AND policy_id = ?",
+      [user_id, policy_id]
+    );
+
+    if (existing.length > 0) {
+      return res.status(400).json({ message: "Policy already purchased" });
+    }
+
+    // ✅ If not, insert the new record
+    await db.query(
+      "INSERT INTO user_policies (user_id, policy_id) VALUES (?, ?)",
+      [user_id, policy_id]
+    );
+
     res.json({ message: "Policy purchased successfully" });
   } catch (err) {
+    console.error("Purchase error:", err);
     res.status(500).json({ error: err.message });
   }
 }
+
 
 // User views their purchased policies
 export async function getUserPurchases(req, res) {
@@ -26,6 +57,7 @@ export async function getUserPurchases(req, res) {
     );
     res.json(rows);
   } catch (err) {
+    console.error("❌ Error in getUserPurchases:", err);
     res.status(500).json({ error: err.message });
   }
 }
